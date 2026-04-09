@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Protein Calculator - Be Fit</title>
+    <style>
+        /* Shared Be Fit Theme */
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e3a8a;
+            --light-blue: #eff6ff;
+            --text-main: #1f2937;
+            --bg-white: #ffffff;
+            --border-color: #d1d5db;
+            --protein-purple: #6366f1; /* Special highlight for protein */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-blue);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        nav {
+            width: 100%;
+            background-color: var(--dark-blue);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #93c5fd;
+        }
+
+        .calculator-container {
+            background-color: var(--bg-white);
+            width: 90%;
+            max-width: 500px;
+            margin-top: 3rem;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--primary-blue);
+        }
+
+        .calculator-container h2 {
+            text-align: center;
+            color: var(--dark-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            background-color: var(--dark-blue);
+        }
+
+        #result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #eef2ff;
+            border: 2px dashed var(--protein-purple);
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        #protein-target {
+            font-size: 2.5rem;
+            color: var(--protein-purple);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        #result-desc {
+            font-size: 1.1rem;
+            color: var(--dark-blue);
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="home.html">← Back to Home</a>
+    </nav>
+
+    <div class="calculator-container">
+        <h2>Protein Goal Calculator</h2>
+        <p class="subtitle">Find your optimal daily protein intake.</p>
+
+        <div class="input-group">
+            <label for="weight">Body Weight (kg)</label>
+            <input type="number" id="weight" placeholder="e.g., 70" required>
+        </div>
+
+        <div class="input-group">
+            <label for="goal">Activity Level & Fitness Goal</label>
+            <select id="goal">
+                <option value="0.8">Sedentary (Maintain general health)</option>
+                <option value="1.2">Lightly Active (General fitness & light exercise)</option>
+                <option value="1.6">Moderately Active (Endurance sports/Running)</option>
+                <option value="2.0">Very Active (Strength training & Muscle building)</option>
+            </select>
+        </div>
+
+        <button onclick="calculateProtein()">Calculate Target</button>
+
+        <div id="result-box">
+            <div id="protein-target">0g - 0g</div>
+            <div id="result-desc">grams per day</div>
+        </div>
+    </div>
+
+    <script>
+        function calculateProtein() {
+            const weight = parseFloat(document.getElementById('weight').value);
+            const multiplier = parseFloat(document.getElementById('goal').value);
+
+            if (isNaN(weight) || weight <= 0) {
+                alert("Please enter a valid body weight.");
+                return;
+            }
+
+            // Calculate the lower and upper bounds of the recommended range
+            // We add 0.2 to the multiplier to give a healthy range (e.g., 1.6g to 1.8g)
+            const lowerBound = Math.round(weight * multiplier);
+            const upperBound = Math.round(weight * (multiplier + 0.2));
+
+            // Update UI
+            document.getElementById('protein-target').innerText = `${lowerBound}g - ${upperBound}g`;
+            document.getElementById('result-box').style.display = "block";
+        }
+    </script>
+</body>
+</html>

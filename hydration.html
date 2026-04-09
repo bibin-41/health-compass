@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hydration Calculator - Be Fit</title>
+    <style>
+        /* Shared Be Fit Theme */
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e3a8a;
+            --light-blue: #eff6ff;
+            --text-main: #1f2937;
+            --bg-white: #ffffff;
+            --border-color: #d1d5db;
+            --water-blue: #0ea5e9; /* Special color just for water results */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-blue);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        nav {
+            width: 100%;
+            background-color: var(--dark-blue);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .calculator-container {
+            background-color: var(--bg-white);
+            width: 90%;
+            max-width: 500px;
+            margin-top: 3rem;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--primary-blue);
+        }
+
+        .calculator-container h2 {
+            text-align: center;
+            color: var(--dark-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--dark-blue);
+        }
+
+        #result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #f0f9ff;
+            border: 2px dashed var(--water-blue);
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        #result-box h3 {
+            color: var(--water-blue);
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #result-box p {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--dark-blue);
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">← Back to Home</a>
+    </nav>
+
+    <div class="calculator-container">
+        <h2>Hydration Needs</h2>
+        <p class="subtitle">Find out how much water you should drink daily.</p>
+
+        <div class="input-group">
+            <label for="weight">Body Weight (kg)</label>
+            <input type="number" id="weight" placeholder="e.g., 70" required>
+        </div>
+
+        <div class="input-group">
+            <label for="exercise">Daily Exercise (Minutes)</label>
+            <input type="number" id="exercise" placeholder="e.g., 30 (Leave blank if none)">
+        </div>
+
+        <button onclick="calculateWater()">Calculate Water Intake</button>
+
+        <div id="result-box">
+            <h3 id="water-value">0.0 L</h3>
+            <p id="water-category">glasses per day</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateWater() {
+            // 1. Get values
+            const weight = parseFloat(document.getElementById('weight').value);
+            // If the user leaves exercise blank, default to 0
+            const exerciseMins = parseFloat(document.getElementById('exercise').value) || 0; 
+
+            // 2. Validate input
+            if (isNaN(weight) || weight <= 0) {
+                alert("Please enter a valid body weight.");
+                return;
+            }
+
+            // 3. Math Logic
+            // Base hydration: 33ml per kg of body weight
+            let liters = weight * 0.033;
+
+            // Add 0.35L (350ml) for every 30 mins of exercise
+            if (exerciseMins > 0) {
+                liters += (exerciseMins / 30) * 0.35;
+            }
+
+            // Round to 1 decimal place
+            const finalLiters = liters.toFixed(1);
+            
+            // Calculate approximate glasses (assuming an average glass is 250ml / 0.25L)
+            const glasses = Math.round(finalLiters / 0.25); 
+
+            // 4. Update the UI
+            document.getElementById('water-value').innerText = `${finalLiters} Liters`;
+            document.getElementById('water-category').innerText = `(Approx. ${glasses} glasses per day)`;
+            document.getElementById('result-box').style.display = "block";
+
+            // 5. Save to LocalStorage for the Complete Report Page
+            localStorage.setItem('health_water', `${finalLiters} Liters/day`);
+        }
+    </script>
+
+</body>
+</html>

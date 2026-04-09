@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BMI Calculator - Be Fit</title>
+    <style>
+        /* Reusing your dominant blue theme */
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e3a8a;
+            --light-blue: #eff6ff;
+            --text-main: #1f2937;
+            --bg-white: #ffffff;
+            --border-color: #d1d5db;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-blue);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Simple Navigation Bar */
+        nav {
+            width: 100%;
+            background-color: var(--dark-blue);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        /* Calculator Container */
+        .calculator-container {
+            background-color: var(--bg-white);
+            width: 90%;
+            max-width: 500px;
+            margin-top: 3rem;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--primary-blue);
+        }
+
+        .calculator-container h2 {
+            text-align: center;
+            color: var(--dark-blue);
+            margin-bottom: 1.5rem;
+        }
+
+        /* Form Elements */
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .input-group input, 
+        .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, 
+        .input-group select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        /* Calculate Button */
+        button {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button:hover {
+            background-color: var(--dark-blue);
+        }
+
+        /* Results Display */
+        #result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: var(--light-blue);
+            border: 2px dashed var(--primary-blue);
+            border-radius: 8px;
+            text-align: center;
+            display: none; /* Hidden until calculated */
+        }
+
+        #result-box h3 {
+            color: var(--dark-blue);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        #result-box p {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">← Back to Home</a>
+    </nav>
+
+    <div class="calculator-container">
+        <h2>BMI Calculator</h2>
+
+        <div class="input-group">
+            <label for="sex">Biological Sex</label>
+            <select id="sex">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="weight">Weight (kg)</label>
+            <input type="number" id="weight" placeholder="e.g., 70" required>
+        </div>
+
+        <div class="input-group">
+            <label for="height">Height (cm)</label>
+            <input type="number" id="height" placeholder="e.g., 175" required>
+        </div>
+
+        <button onclick="calculateBMI()">Calculate BMI</button>
+
+        <div id="result-box">
+            <h3 id="bmi-value">0.0</h3>
+            <p id="bmi-category">Category</p>
+        </div>
+    </div>
+
+    <script>
+        function calculateBMI() {
+            // 1. Get values from the inputs
+            const sex = document.getElementById('sex').value;
+            const weight = parseFloat(document.getElementById('weight').value);
+            const heightCm = parseFloat(document.getElementById('height').value);
+
+            // 2. Validate inputs so the code doesn't break if fields are empty
+            if (isNaN(weight) || isNaN(heightCm) || weight <= 0 || heightCm <= 0) {
+                alert("Please enter valid positive numbers for weight and height.");
+                return;
+            }
+
+            // 3. Convert height to meters and calculate
+            const heightM = heightCm / 100;
+            const bmi = (weight / (heightM * heightM)).toFixed(1);
+
+            // 4. Determine the weight category
+            let category = "";
+            let categoryColor = "";
+
+            if (bmi < 18.5) {
+                category = "Underweight";
+                categoryColor = "#eab308"; // Yellow
+            } else if (bmi >= 18.5 && bmi <= 24.9) {
+                category = "Normal Weight";
+                categoryColor = "#22c55e"; // Green
+            } else if (bmi >= 25 && bmi <= 29.9) {
+                category = "Overweight";
+                categoryColor = "#f97316"; // Orange
+            } else {
+                category = "Obese";
+                categoryColor = "#ef4444"; // Red
+            }
+
+            // 5. Update the UI
+            const resultBox = document.getElementById('result-box');
+            const bmiValueDisplay = document.getElementById('bmi-value');
+            const bmiCategoryDisplay = document.getElementById('bmi-category');
+
+            bmiValueDisplay.innerText = bmi;
+            bmiCategoryDisplay.innerText = category;
+            bmiCategoryDisplay.style.color = categoryColor;
+            
+            // Make the result box visible
+            resultBox.style.display = "block";
+
+            // 6. Save the data to LocalStorage for the Final Report Page
+            // Saving sex, BMI, and category so you have all the data you need later
+            const reportData = `Sex: ${sex.charAt(0).toUpperCase() + sex.slice(1)} | BMI: ${bmi} (${category})`;
+            localStorage.setItem('health_bmi', reportData);
+        }
+    </script>
+
+</body>
+</html>
