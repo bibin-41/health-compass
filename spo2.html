@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SpO2 Checker - Health Compass</title>
+    <style>
+        /* Shared HealthCompass Theme */
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e3a8a;
+            --light-blue: #eff6ff;
+            --text-main: #1f2937;
+            --bg-white: #ffffff;
+            --border-color: #d1d5db;
+            --spo2-cyan: #0891b2; /* Special airy cyan highlight for oxygen */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-blue);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        nav {
+            width: 100%;
+            background-color: var(--dark-blue);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #93c5fd;
+        }
+
+        .calculator-container {
+            background-color: var(--bg-white);
+            width: 90%;
+            max-width: 500px;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--primary-blue);
+        }
+
+        .calculator-container h2 {
+            text-align: center;
+            color: var(--dark-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            background-color: var(--dark-blue);
+        }
+
+        #result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #ecfeff; /* Very light cyan background */
+            border: 2px dashed var(--spo2-cyan);
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        #spo2-reading {
+            font-size: 2.5rem;
+            color: var(--spo2-cyan);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        #result-status {
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .info-text {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-style: italic;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">← Back to Home</a>
+    </nav>
+
+    <div class="calculator-container">
+        <h2>Blood Oxygen (SpO2)</h2>
+        <p class="subtitle">Enter the reading from your pulse oximeter.</p>
+
+        <div class="input-group">
+            <label for="spo2-value">Oxygen Saturation (%)</label>
+            <input type="number" id="spo2-value" placeholder="e.g., 98" required>
+        </div>
+
+        <button onclick="checkSpO2()">Check Status</button>
+
+        <div id="result-box">
+            <div id="spo2-reading">0%</div>
+            <div id="result-status">---</div>
+        </div>
+        
+      
+    </div>
+
+    <script>
+        function checkSpO2() {
+            const spo2 = parseFloat(document.getElementById('spo2-value').value);
+
+            // Validation: SpO2 cannot realistically be over 100% or under 0%
+            if (isNaN(spo2) || spo2 <= 0 || spo2 > 100) {
+                alert("Please enter a valid percentage between 1 and 100.");
+                return;
+            }
+
+            let status = "";
+            let color = "";
+
+            if (spo2 >= 95) {
+                status = "Normal / Healthy";
+                color = "#16a34a"; // Green
+            } else if (spo2 >= 91) {
+                status = "Mild Hypoxia (Monitor Closely)";
+                color = "#d97706"; // Amber
+            } else {
+                status = "Hypoxemia (Seek Medical Attention)";
+                color = "#dc2626"; // Red
+            }
+
+            // Update UI
+            document.getElementById('spo2-reading').innerText = `${Math.round(spo2)}%`;
+            const statusDisplay = document.getElementById('result-status');
+            statusDisplay.innerText = status;
+            statusDisplay.style.color = color;
+            
+            document.getElementById('result-box').style.display = "block";
+
+            // Save to LocalStorage
+            localStorage.setItem('health_spo2', `${Math.round(spo2)}% - ${status}`);
+        }
+    </script>
+</body>
+</html>

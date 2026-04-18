@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cholesterol Profile - Health Compass</title>
+    <style>
+        /* Shared HealthCompass Theme */
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e3a8a;
+            --light-blue: #eff6ff;
+            --text-main: #1f2937;
+            --bg-white: #ffffff;
+            --border-color: #d1d5db;
+            --lipid-gold: #d97706; /* Golden highlight for cholesterol/lipids */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-blue);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        nav {
+            width: 100%;
+            background-color: var(--dark-blue);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #93c5fd;
+        }
+
+        .calculator-container {
+            background-color: var(--bg-white);
+            width: 90%;
+            max-width: 550px;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--primary-blue);
+        }
+
+        .calculator-container h2 {
+            text-align: center;
+            color: var(--dark-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+            font-size: 0.95rem;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background-color: var(--dark-blue);
+        }
+
+        #result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #fffbeb; /* Light yellow/gold background */
+            border: 2px dashed var(--lipid-gold);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #fde68a;
+            font-size: 1rem;
+        }
+
+        .result-row:last-child {
+            border-bottom: none;
+        }
+
+        .result-label {
+            font-weight: 600;
+            color: var(--dark-blue);
+        }
+
+        .result-status {
+            font-weight: bold;
+        }
+
+        .info-text {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-style: italic;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">← Back to Home</a>
+    </nav>
+
+    <div class="calculator-container">
+        <h2>Cholesterol Profile</h2>
+        <p class="subtitle">Enter your lipid panel results (in mg/dL).</p>
+
+        <div class="input-group">
+            <label for="sex">Biological Sex (Affects HDL targets)</label>
+            <select id="sex">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="total">Total Cholesterol</label>
+            <input type="number" id="total" placeholder="e.g., 185" required>
+        </div>
+
+        <div class="input-group">
+            <label for="ldl">LDL Cholesterol (Bad)</label>
+            <input type="number" id="ldl" placeholder="e.g., 110" required>
+        </div>
+
+        <div class="input-group">
+            <label for="hdl">HDL Cholesterol (Good)</label>
+            <input type="number" id="hdl" placeholder="e.g., 55" required>
+        </div>
+
+        <div class="input-group">
+            <label for="trig">Triglycerides</label>
+            <input type="number" id="trig" placeholder="e.g., 120" required>
+        </div>
+
+        <button onclick="checkCholesterol()">Analyze Profile</button>
+
+        <div id="result-box">
+            <div class="result-row">
+                <span class="result-label">Total:</span>
+                <span class="result-status" id="res-total">---</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">LDL (Bad):</span>
+                <span class="result-status" id="res-ldl">---</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">HDL (Good):</span>
+                <span class="result-status" id="res-hdl">---</span>
+            </div>
+            <div class="result-row">
+                <span class="result-label">Triglycerides:</span>
+                <span class="result-status" id="res-trig">---</span>
+            </div>
+        </div>
+        
+       
+    </div>
+
+    <script>
+        // Helper function to color code the results
+        function setStatus(elementId, value, status, color) {
+            const el = document.getElementById(elementId);
+            el.innerText = `${value} mg/dL (${status})`;
+            el.style.color = color;
+        }
+
+        function checkCholesterol() {
+            const sex = document.getElementById('sex').value;
+            const total = parseFloat(document.getElementById('total').value);
+            const ldl = parseFloat(document.getElementById('ldl').value);
+            const hdl = parseFloat(document.getElementById('hdl').value);
+            const trig = parseFloat(document.getElementById('trig').value);
+
+            if (isNaN(total) || isNaN(ldl) || isNaN(hdl) || isNaN(trig)) {
+                alert("Please enter valid numbers for all fields.");
+                return;
+            }
+
+            const green = "#16a34a"; // Good/Optimal
+            const amber = "#d97706"; // Borderline
+            const red = "#dc2626";   // High/Risk
+
+            // 1. Total Cholesterol Logic
+            if (total < 200) setStatus('res-total', total, 'Desirable', green);
+            else if (total <= 239) setStatus('res-total', total, 'Borderline High', amber);
+            else setStatus('res-total', total, 'High', red);
+
+            // 2. LDL (Bad) Logic
+            if (ldl < 100) setStatus('res-ldl', ldl, 'Optimal', green);
+            else if (ldl <= 129) setStatus('res-ldl', ldl, 'Near Optimal', green);
+            else if (ldl <= 159) setStatus('res-ldl', ldl, 'Borderline High', amber);
+            else if (ldl <= 189) setStatus('res-ldl', ldl, 'High', red);
+            else setStatus('res-ldl', ldl, 'Very High', red);
+
+            // 3. HDL (Good) Logic - Higher is better!
+            let hdlRiskThreshold = sex === 'male' ? 40 : 50;
+            if (hdl >= 60) setStatus('res-hdl', hdl, 'Optimal', green);
+            else if (hdl >= hdlRiskThreshold) setStatus('res-hdl', hdl, 'Acceptable', amber);
+            else setStatus('res-hdl', hdl, 'Low (Risk)', red);
+
+            // 4. Triglycerides Logic
+            if (trig < 150) setStatus('res-trig', trig, 'Normal', green);
+            else if (trig <= 199) setStatus('res-trig', trig, 'Borderline High', amber);
+            else if (trig <= 499) setStatus('res-trig', trig, 'High', red);
+            else setStatus('res-trig', trig, 'Very High', red);
+
+            // Show the result box
+            document.getElementById('result-box').style.display = "block";
+
+            // Save to LocalStorage
+            localStorage.setItem('health_cholesterol', `Total: ${total} | LDL: ${ldl} | HDL: ${hdl} | Trig: ${trig}`);
+        }
+    </script>
+</body>
+</html>

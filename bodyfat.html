@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Body Fat Calculator - HealthCompass</title>
+    <style>
+        /* Shared HealthCompass Theme */
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e3a8a;
+            --light-blue: #eff6ff;
+            --text-main: #1f2937;
+            --bg-white: #ffffff;
+            --border-color: #d1d5db;
+            --bf-teal: #0d9488; /* Special highlight for Body Fat */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-blue);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        nav {
+            width: 100%;
+            background-color: var(--dark-blue);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #93c5fd;
+        }
+
+        .calculator-container {
+            background-color: var(--bg-white);
+            width: 90%;
+            max-width: 500px;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--primary-blue);
+        }
+
+        .calculator-container h2 {
+            text-align: center;
+            color: var(--dark-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 1rem;
+        }
+
+        button:hover {
+            background-color: var(--dark-blue);
+        }
+
+        #result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #f0fdfa;
+            border: 2px dashed var(--bf-teal);
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        #bf-target {
+            font-size: 2.5rem;
+            color: var(--bf-teal);
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        #result-desc {
+            font-size: 1.1rem;
+            color: var(--dark-blue);
+            font-weight: 600;
+        }
+
+        /* Utility class to hide the hip input for men */
+        .hidden {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">← Back to Home</a>
+    </nav>
+
+    <div class="calculator-container">
+        <h2>Body Fat Calculator</h2>
+        <p class="subtitle">Estimate your body fat percentage using the US Navy Method.</p>
+
+        <div class="input-group">
+            <label for="sex">Biological Sex</label>
+            <select id="sex" onchange="toggleHipInput()">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="height">Height (cm)</label>
+            <input type="number" id="height" placeholder="e.g., 175" required>
+        </div>
+
+        <div class="input-group">
+            <label for="neck">Neck Circumference (cm)</label>
+            <input type="number" id="neck" placeholder="e.g., 38" required>
+        </div>
+
+        <div class="input-group">
+            <label for="waist">Waist Circumference (cm)</label>
+            <input type="number" id="waist" placeholder="e.g., 85" required>
+        </div>
+
+        <div class="input-group hidden" id="hip-group">
+            <label for="hip">Hip Circumference (cm)</label>
+            <input type="number" id="hip" placeholder="e.g., 95">
+        </div>
+
+        <button onclick="calculateBodyFat()">Calculate Body Fat %</button>
+
+        <div id="result-box">
+            <div id="bf-target">0%</div>
+            <div id="result-desc">Category</div>
+        </div>
+    </div>
+
+    <script>
+        // Hides or shows the Hip input based on the selected sex
+        function toggleHipInput() {
+            const sex = document.getElementById('sex').value;
+            const hipGroup = document.getElementById('hip-group');
+            
+            if (sex === 'female') {
+                hipGroup.classList.remove('hidden');
+            } else {
+                hipGroup.classList.add('hidden');
+            }
+        }
+
+        function calculateBodyFat() {
+            const sex = document.getElementById('sex').value;
+            const height = parseFloat(document.getElementById('height').value);
+            const neck = parseFloat(document.getElementById('neck').value);
+            const waist = parseFloat(document.getElementById('waist').value);
+            const hip = parseFloat(document.getElementById('hip').value);
+
+            // Basic validation
+            if (isNaN(height) || isNaN(neck) || isNaN(waist) || height <= 0 || neck <= 0 || waist <= 0) {
+                alert("Please enter valid positive numbers for height, neck, and waist.");
+                return;
+            }
+
+            if (sex === 'female' && (isNaN(hip) || hip <= 0)) {
+                alert("Please enter a valid positive number for hip circumference.");
+                return;
+            }
+
+            let bodyFat = 0;
+
+            // US Navy Method Formulas (Metric)
+            if (sex === 'male') {
+                bodyFat = 495 / (1.0324 - 0.19077 * Math.log10(waist - neck) + 0.15456 * Math.log10(height)) - 450;
+            } else {
+                bodyFat = 495 / (1.29579 - 0.35004 * Math.log10(waist + hip - neck) + 0.22100 * Math.log10(height)) - 450;
+            }
+
+            // Clean up the number to 1 decimal place
+            const finalBF = bodyFat.toFixed(1);
+
+            // Determine category
+            let category = "";
+            if (sex === 'male') {
+                if (finalBF < 6) category = "Essential Fat";
+                else if (finalBF <= 13) category = "Athletes";
+                else if (finalBF <= 17) category = "Fitness";
+                else if (finalBF <= 24) category = "Average";
+                else category = "Obese";
+            } else { // Female
+                if (finalBF < 14) category = "Essential Fat";
+                else if (finalBF <= 20) category = "Athletes";
+                else if (finalBF <= 24) category = "Fitness";
+                else if (finalBF <= 31) category = "Average";
+                else category = "Obese";
+            }
+
+            // Prevent displaying negative numbers or impossibly low results if inputs are extreme
+            if (finalBF < 1 || isNaN(finalBF)) {
+                alert("The entered measurements resulted in an invalid calculation. Please double-check your inputs.");
+                return;
+            }
+
+            // Update UI
+            document.getElementById('bf-target').innerText = `${finalBF}%`;
+            document.getElementById('result-desc').innerText = category;
+            document.getElementById('result-box').style.display = "block";
+
+            // Save to LocalStorage
+            localStorage.setItem('health_bodyfat', `${finalBF}% (${category})`);
+        }
+    </script>
+</body>
+</html>

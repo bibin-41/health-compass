@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Macro Calculator - Health Compass</title>
+    <style>
+        /* Shared HealthCompass Theme */
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e3a8a;
+            --light-blue: #eff6ff;
+            --text-main: #1f2937;
+            --bg-white: #ffffff;
+            --border-color: #d1d5db;
+            --macro-green: #10b981; /* Special emerald highlight for nutrition */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-blue);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        nav {
+            width: 100%;
+            background-color: var(--dark-blue);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #93c5fd;
+        }
+
+        .calculator-container {
+            background-color: var(--bg-white);
+            width: 90%;
+            max-width: 500px;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--primary-blue);
+        }
+
+        .calculator-container h2 {
+            text-align: center;
+            color: var(--dark-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            background-color: var(--dark-blue);
+        }
+
+        #result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #ecfdf5;
+            border: 2px dashed var(--macro-green);
+            border-radius: 8px;
+            display: none;
+        }
+
+        .macro-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid #d1fae5;
+            font-size: 1.1rem;
+        }
+
+        .macro-row:last-child {
+            border-bottom: none;
+        }
+
+        .macro-label {
+            font-weight: 600;
+            color: var(--dark-blue);
+        }
+
+        .macro-value {
+            font-weight: bold;
+            color: var(--macro-green);
+            font-size: 1.25rem;
+        }
+
+        .info-text {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-style: italic;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">← Back to Home</a>
+    </nav>
+
+    <div class="calculator-container">
+        <h2>Macronutrient Split</h2>
+        <p class="subtitle">Distribute your daily calories into carbs, protein, and fat.</p>
+
+        <div class="input-group">
+            <label for="calories">Target Daily Calories</label>
+            <input type="number" id="calories" placeholder="e.g., 2000" required>
+        </div>
+
+        <div class="input-group">
+            <label for="goal">Diet Goal / Split Type</label>
+            <select id="goal">
+                <option value="balanced">Balanced (40% Carbs, 30% Protein, 30% Fat)</option>
+                <option value="weightloss">Low Carb / Weight Loss (25% Carbs, 40% Protein, 35% Fat)</option>
+                <option value="endurance">High Carb / Endurance (55% Carbs, 20% Protein, 25% Fat)</option>
+                <option value="keto">Ketogenic (5% Carbs, 25% Protein, 70% Fat)</option>
+            </select>
+        </div>
+
+        <button onclick="calculateMacros()">Calculate Macros</button>
+
+        <div id="result-box">
+            <div class="macro-row">
+                <span class="macro-label">Carbohydrates:</span>
+                <span class="macro-value" id="res-carbs">0g</span>
+            </div>
+            <div class="macro-row">
+                <span class="macro-label">Protein:</span>
+                <span class="macro-value" id="res-protein">0g</span>
+            </div>
+            <div class="macro-row">
+                <span class="macro-label">Fats:</span>
+                <span class="macro-value" id="res-fat">0g</span>
+            </div>
+        </div>
+        
+      
+    </div>
+
+    <script>
+        // Auto-fill calories from localStorage when the page loads
+        window.onload = function() {
+            const savedCalories = localStorage.getItem('health_calories');
+            if (savedCalories) {
+                // Extract just the number from the string (e.g., "2500 kcal/day" -> 2500)
+                const calorieNumber = savedCalories.replace(/\D/g, ''); 
+                if(calorieNumber) {
+                    document.getElementById('calories').value = calorieNumber;
+                }
+            }
+        };
+
+        function calculateMacros() {
+            const totalCalories = parseFloat(document.getElementById('calories').value);
+            const goal = document.getElementById('goal').value;
+
+            if (isNaN(totalCalories) || totalCalories <= 0) {
+                alert("Please enter a valid number of daily calories.");
+                return;
+            }
+
+            let carbPercent = 0, proteinPercent = 0, fatPercent = 0;
+
+            // Set the percentages based on the selected goal
+            if (goal === 'balanced') {
+                carbPercent = 0.40; proteinPercent = 0.30; fatPercent = 0.30;
+            } else if (goal === 'weightloss') {
+                carbPercent = 0.25; proteinPercent = 0.40; fatPercent = 0.35;
+            } else if (goal === 'endurance') {
+                carbPercent = 0.55; proteinPercent = 0.20; fatPercent = 0.25;
+            } else if (goal === 'keto') {
+                carbPercent = 0.05; proteinPercent = 0.25; fatPercent = 0.70;
+            }
+
+            // Math Logic: Carbs and Protein have 4 calories per gram. Fats have 9 calories per gram.
+            const carbGrams = Math.round((totalCalories * carbPercent) / 4);
+            const proteinGrams = Math.round((totalCalories * proteinPercent) / 4);
+            const fatGrams = Math.round((totalCalories * fatPercent) / 9);
+
+            // Update UI
+            document.getElementById('res-carbs').innerText = `${carbGrams}g`;
+            document.getElementById('res-protein').innerText = `${proteinGrams}g`;
+            document.getElementById('res-fat').innerText = `${fatGrams}g`;
+            
+            document.getElementById('result-box').style.display = "block";
+
+            // Save to LocalStorage
+            localStorage.setItem('health_macros', `${carbGrams}g C | ${proteinGrams}g P | ${fatGrams}g F`);
+        }
+    </script>
+</body>
+</html>

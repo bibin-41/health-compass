@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hemoglobin Checker - HealthCompass</title>
+    <style>
+        /* Shared HealthCompass Theme */
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e3a8a;
+            --light-blue: #eff6ff;
+            --text-main: #1f2937;
+            --bg-white: #ffffff;
+            --border-color: #d1d5db;
+            --hgb-red: #e11d48; /* Special crimson highlight for hemoglobin */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light-blue);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        nav {
+            width: 100%;
+            background-color: var(--dark-blue);
+            padding: 1rem;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1rem;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #93c5fd;
+        }
+
+        .calculator-container {
+            background-color: var(--bg-white);
+            width: 90%;
+            max-width: 500px;
+            margin-top: 3rem;
+            margin-bottom: 3rem;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-top: 5px solid var(--primary-blue);
+        }
+
+        .calculator-container h2 {
+            text-align: center;
+            color: var(--dark-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            margin-bottom: 1.5rem;
+            font-size: 0.9rem;
+        }
+
+        .input-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: var(--text-main);
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+        }
+
+        button {
+            width: 100%;
+            background-color: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 0.5rem;
+        }
+
+        button:hover {
+            background-color: var(--dark-blue);
+        }
+
+        #result-box {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background-color: #fff1f2; /* Very light pink/red background */
+            border: 2px dashed var(--hgb-red);
+            border-radius: 8px;
+            text-align: center;
+            display: none;
+        }
+
+        #hgb-reading {
+            font-size: 1.25rem;
+            color: var(--dark-blue);
+            margin-bottom: 0.5rem;
+        }
+
+        #result-status {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .info-text {
+            margin-top: 1.5rem;
+            font-size: 0.85rem;
+            color: #6b7280;
+            font-style: italic;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">← Back to Home</a>
+    </nav>
+
+    <div class="calculator-container">
+        <h2>Hemoglobin Checker</h2>
+        <p class="subtitle">Check if your blood oxygen-carrying capacity is normal.</p>
+
+        <div class="input-group">
+            <label for="sex">Biological Sex</label>
+            <select id="sex">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+        </div>
+
+        <div class="input-group">
+            <label for="hgb-value">Hemoglobin Level (g/dL)</label>
+            <input type="number" id="hgb-value" placeholder="e.g., 14.5" step="0.1" required>
+        </div>
+
+        <button onclick="checkHemoglobin()">Check Status</button>
+
+        <div id="result-box">
+            <div id="hgb-reading">0.0 g/dL</div>
+            <div id="result-status">---</div>
+        </div>
+        
+       
+
+    <script>
+        function checkHemoglobin() {
+            const sex = document.getElementById('sex').value;
+            const hgb = parseFloat(document.getElementById('hgb-value').value);
+
+            if (isNaN(hgb) || hgb <= 0) {
+                alert("Please enter a valid hemoglobin value.");
+                return;
+            }
+
+            let status = "";
+            let color = "";
+
+            // Adult Male: Normal is typically 13.8 to 17.2 g/dL
+            // Adult Female: Normal is typically 12.1 to 15.1 g/dL
+            
+            if (sex === 'male') {
+                if (hgb < 13.8) {
+                    status = "Low (Anemia Risk)";
+                    color = "#f59e0b"; // Amber warning
+                } else if (hgb <= 17.2) {
+                    status = "Normal";
+                    color = "#22c55e"; // Green good
+                } else {
+                    status = "High (Polycythemia Risk)";
+                    color = "#ef4444"; // Red warning
+                }
+            } else { // Female
+                if (hgb < 12.1) {
+                    status = "Low (Anemia Risk)";
+                    color = "#f59e0b"; // Amber warning
+                } else if (hgb <= 15.1) {
+                    status = "Normal";
+                    color = "#22c55e"; // Green good
+                } else {
+                    status = "High (Polycythemia Risk)";
+                    color = "#ef4444"; // Red warning
+                }
+            }
+
+            // Update UI
+            document.getElementById('hgb-reading').innerText = `${hgb.toFixed(1)} g/dL`;
+            const statusDisplay = document.getElementById('result-status');
+            statusDisplay.innerText = status;
+            statusDisplay.style.color = color;
+            
+            document.getElementById('result-box').style.display = "block";
+
+            // Save to LocalStorage for a potential dashboard later
+            localStorage.setItem('health_hemoglobin', `${hgb.toFixed(1)} g/dL - ${status}`);
+        }
+    </script>
+</body>
+</html>

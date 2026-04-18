@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Compass</title>
+    <style>
+        /* Color Palette and Base Reset */
+        :root {
+            --primary-blue: #2563eb;       
+            --dark-blue: #1e3a8a;          
+            --light-blue: #eff6ff;         
+            --hover-blue: #dbeafe;         
+            --text-main: #1f2937;
+            --text-light: #6b7280;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-blue);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Header Styling */
+        header {
+            background-color: var(--dark-blue);
+            width: 100%;
+            padding: 2rem 1rem;
+            text-align: center;
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2.5rem;
+        }
+
+        header h1 {
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 800;
+        }
+
+        header p {
+            margin-top: 0.5rem;
+            font-size: 1rem;
+            color: var(--hover-blue);
+        }
+
+        /* Grid Layout for Tiles */
+        .tile-container {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1.5rem;
+            width: 95%;
+            max-width: 1200px;
+            padding-bottom: 3rem;
+        }
+
+        /* Individual Tile Styling */
+        .tile {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            text-decoration: none;
+            color: var(--text-main);
+            border-top: 5px solid var(--primary-blue);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tile h2 {
+            color: var(--dark-blue);
+            font-size: 1.25rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .tile p {
+            color: var(--text-light);
+            font-size: 0.85rem;
+            line-height: 1.4;
+        }
+
+        .tile:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 20px -5px rgba(0, 0, 0, 0.1);
+            background-color: var(--hover-blue);
+            border-top: 5px solid var(--dark-blue);
+        }
+
+        /* ABOUT SECTION STYLING */
+        .about-section {
+            width: 95%;
+            max-width: 1200px; /* Matched the grid width */
+            background-color: var(--dark-blue);
+            color: white;
+            padding: 2.5rem;
+            border-radius: 12px;
+            text-align: center;
+            margin-bottom: 3rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-section h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: var(--hover-blue);
+            letter-spacing: 1px;
+        }
+
+        .about-section p {
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            max-width: 800px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .creator-badge {
+            display: inline-block;
+            background-color: var(--primary-blue);
+            padding: 0.5rem 1.5rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1024px) {
+            .tile-container {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .tile-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tile-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Health Compass</h1>
+        <p>Your personal dashboard for vital metrics</p>
+    </header>
+
+    <main class="tile-container">
+        <a href="bmi.html" class="tile">
+            <h2>BMI Calculator</h2>
+            <p>Check your Body Mass Index based on your height and weight to see your weight category.</p>
+        </a>
+
+        <a href="calorie.html" class="tile">
+            <h2>Calorie Calculator</h2>
+            <p>Determine your daily calorie requirements based on your activity level and body metrics.</p>
+        </a>
+        
+         <a href="bodyfat.html" class="tile">
+            <h2>Body Fat %</h2>
+            <p>Accurately estimate your body composition using the US Navy tape measure method.</p>
+        </a>
+        
+         <a href="hydration.html" class="tile">
+            <h2>Hydration Needs</h2>
+            <p>Calculate your optimal daily water intake based on your body weight and lifestyle.</p>
+        </a>
+        
+        <a href="macros.html" class="tile">
+            <h2>Macronutrient Split</h2>
+            <p>Break down your daily calorie target into exact grams of carbs, protein, and fat.</p>
+        </a> <a href="cholesterol.html" class="tile">
+            <h2>Cholesterol Profile</h2>
+            <p>Analyze your lipid panel including Total, LDL, HDL, and Triglycerides.</p>
+        </a>
+        
+        <a href="spo2.html" class="tile">
+            <h2>Oxygen (SpO2)</h2>
+            <p>Check your blood oxygen levels against standard clinical thresholds.</p>
+        </a>
+        
+       <a href="hemoglobin.html" class="tile">
+            <h2>Hemoglobin Levels</h2>
+            <p>Check your blood oxygen-carrying capacity against standard clinical ranges.</p>
+        </a>
+        
+        <a href="sugar.html" class="tile">
+            <h2>Blood Sugar</h2>
+            <p>Enter your fasting or post-meal glucose levels to verify if they fall within a normal range.</p>
+        </a>
+
+        <a href="bp.html" class="tile">
+            <h2>Blood Pressure</h2>
+            <p>Input your systolic and diastolic numbers to check your cardiovascular health status.</p>
+        </a>
+        
+       <a href="protein.html" class="tile">
+            <h2>Protein Calculator</h2>
+            <p>Discover your optimal daily protein intake based on your body weight and fitness goals.</p>
+        </a>
+
+        <a href="sleep.html" class="tile">
+            <h2>Sleep Calculator</h2>
+            <p>Determine your optimal nightly sleep range based on your age and physical activity level.</p>
+        </a>
+    </main>
+
+    <footer class="about-section">
+        <h2>About HealthCompass</h2>
+        <p>HealthCompass is an all-in-one personal wellness dashboard developed as the Idea Lab project by Group 5 (S2 Computer Science and Engineering) at Mar Athanasius College of Engineering. It bridges the gap between clinical health tracking and daily fitness goals by providing instant, data-driven insights based on standard medical guidelines. Calculate your metrics, understand your baseline, and navigate your fitness journey.</p>
+        <div class="creator-badge">
+            Developed by <strong>Bibin, Ashin, Azmi, Chris and Devanandhana</strong>
+        </div>
+    </footer>
+
+</body>
+</html>
